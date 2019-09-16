@@ -1,0 +1,78 @@
+.wrapper-login-form{
+    padding-top: 20px;
+    text-align: center;
+}
+.form-inline{
+    justify-content: flex-end;
+}
+.form-group{
+    margin-right: 3%;
+}
+.wrapper-login{
+    padding-top: 5%;
+}
+.wrap-login{
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f3f3f3;
+    border-radius: 20px;
+}
+.wrap-login p{
+    text-align: left;
+}
+.wrap-login input{
+    width: 100%;
+}
+.wraper-button-login .btn{
+    width:100%;
+}
+.top_message {
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    background-color: rgba(0, 173, 255, 0.7);
+    padding: 15px;
+    width: 100%;
+}
+.wrapp-message {
+    position: relative;
+    display: block;
+    text-align: center;
+}
+.wrapp-message h3{
+    color: #fff;
+}
+.wrapp-message .close{
+    color: #fff;
+     /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+
+    /* IE 5-7 */
+    filter: alpha(opacity=80);
+
+    /* Netscape */
+    -moz-opacity: 0.8;
+
+    /* Safari 1.x */
+    -khtml-opacity: 0.8;
+
+    /* Good browsers */
+    opacity: 0.8;
+}
+.wrapp-message .close:not(:disabled):not(.disabled):focus,.wrapp-message .close:not(:disabled):not(.disabled):hover{
+    color: #fff;
+      /* IE 8 */
+      -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+
+      /* IE 5-7 */
+      filter: alpha(opacity=100);
+  
+      /* Netscape */
+      -moz-opacity: 1;
+  
+      /* Safari 1.x */
+      -khtml-opacity: 1;
+  
+      /* Good browsers */
+      opacity: 1;
+}

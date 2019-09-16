@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <title>{% block title %} FunnySociety {% endblock title %} </title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+      <link href="https://fonts.googleapis.com/css?family=Lato:400,600,700" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet">
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+      {% load staticfiles %}
+      <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/nav.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+      <link rel="stylesheet" type="text/css" href="{% static 'css/popup.css' %}">
+      <link rel="shortcut icon" href="{% static 'img/logo.png' %}">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
+  </head>
+  <body id="{{ request.resolver_match.url_name }}">
+  {% if user.is_authenticated %}
+    <section class="wrapper-profile-page">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container">
+              <h1 class="navbar-brand">
+                <a href="{% url 'profile' %}">FunnySociety</a>
+              </h1> 
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+                    <i class="material-icons">
+                      menu</i>
+                  </span>
+                </button>
+              <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <form action="{% url 'search' %}"  method="GET" id="search-form" class="form-inline">
+                  {% csrf_token %} 
+                  <input class="form-control" type="text" name="q" size="20" maxlength="40" placeholder = "Search"/>
+                      <button class="btn btn-sm"  type="submit">
+                        <i class="material-icons">
+                          search</i> 
+                      </button>
+                </form>
+                <ul class="navbar-nav">
+                  <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'profile' %}">Profile<span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Discussion
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <a class="dropdown-item" id="activator" href="#">Create Discussion </a>
+                      <a class="dropdown-item" href="{% url 'discussion_list' %}">Discussion List</a>
+                    </div>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Settings
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <a class="dropdown-item" href="{% url 'edit_profile_with_pk' pk=user.pk  %}">Edit Profile</a>
+                      <a class="dropdown-item" href="{% url 'logout' %}">Log Out</a>
+                    </div>
+                  </li>
+                </ul>                
+              </div>
+            </div>
+        </nav>
+    </section>    
+  {% endif %}
+    {% block content %}
+    {% endblock %}  
+  </body>
+</html>

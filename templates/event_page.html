@@ -1,0 +1,25 @@
+#Event page
+<!doctype html>
+    <html lang="en">
+
+        <h1> events </h1>
+        <body>
+        <form method="post">
+            {% block Content %}
+        <h2> <input type="text" id ="eventName" name ="event name">
+        <input type="datetime-local" id = "eventStart" name ="event starts at">
+        <input type="datetime-local" id="eventEnd" name="event ends at">
+        </h2>
+
+            <h3>
+                <p> Event description</p>
+                <textarea name="eventDescription" rows="10" cols="30">
+                </textarea>
+
+                <button type = "create"> eventCreate</button>
+            </h3>
+            {% end block %}
+        </form>
+        </body>
+
+    </html>

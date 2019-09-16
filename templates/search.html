@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+
+{% block title %}Search Results{% endblock %}
+ 
+{% block content %}
+    <section class="wrapper-contain-profile">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="bottom-section wrapper-section">
+                        {% if  not discussions and not users %}
+                            {% if messages %}
+                                
+                                    <h4 style="text-align: center;">{{ messages }}</h4>
+                                
+                            {% endif %}
+                        {% else %}
+                            {% if users %}
+                                <h4 style="margin-bottom: 15px;">Friends results:</h4>
+                                <hr>
+                                {% for user in users %}
+                                    <div>
+                                        <p style="margin-bottom: 0em;"><a  href="{% url 'profile_friend' username=user.username  %}">{{ user.username }}</a> </p>
+                                        {{user.first_name}}
+                                    </div>
+                                <hr>   
+                                {% endfor %}
+                            {% else %}
+                                <h4 style="margin-bottom: 15px;">Discussion results:</h4>
+                                <hr>
+                                {% for discussion in discussions %}
+                                    <div>
+                                        <p style="margin-bottom: 0em;"><a  href='discussion/{{discussion.id}}'>{{ discussion.title }} </a></p>
+                                    </div>
+                                    <hr>   
+                                {% endfor %}
+                            {% endif %}    
+                        {% endif %}  
+                    </div>
+                </div>    
+            </div>     
+        </div>    
+    </section>    
+
+{% endblock %}

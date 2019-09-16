@@ -1,0 +1,89 @@
+body{
+    background-color: #f9f9f9;
+}
+h1,h2,h3,h4,h5,p,a,li{
+    font-family: 'Lato', Arial;
+   
+}
+h1,h2,h3,h4,h5{
+    font-weight:500;
+    line-height:1.1;
+
+}
+p{
+    font-family: 'Lato', Arial;
+    font-size: 1.1em;
+    line-height:1.1;
+}
+a, a:hover, a :hover{
+    color:#2683AE;
+}
+.btn{
+    background-color: #2683AE;
+    border: 1px solid #2683AE;
+    color:#fff;
+}
+.btn:hover{
+    background-color: #3d90b7;
+}
+.navbar-light .navbar-toggler-icon{
+    background-image:none;
+}
+.navbar-light .navbar-toggler{
+    border-color: transparent;
+}
+span.navbar-toggler-icon i {
+    color: #fff;
+}
+#chat-text{
+    display: inline-block;
+    width:90%;
+}
+.wrapper-button-chat{
+    display: inline-block;
+}
+.left-side{
+    display:inline-block;
+    width: 90%;
+}
+.right-side{
+    display: inline-block;
+}
+.chat-content {
+    display: inline-block;
+    width: 90%;
+}
+.wrapper-remove-button{
+    float: right;
+}
+@media screen  and (max-width: 1200px) {
+    .form-inline {
+        justify-content: flex-start !important;
+    }
+    .form-inline .form-control{
+        display: block;
+        width: 90%;
+    }
+    #chat-text,.wrapper-button-chat{
+        display:block;
+        width:100%;
+    }
+    .wrapper-button-chat .btn{
+        margin-top: 10px;
+        width:100%;
+    }
+    .left-side{
+        display:block;
+        width: 100%;
+    }
+    .right-side{
+        display:block;
+        width: 100%;
+    }
+    .right-side .btn{
+        width: 100%;
+    }
+    .wrapper-remove-button{
+        float: none;
+    }
+}

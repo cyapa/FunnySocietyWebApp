@@ -1,0 +1,35 @@
+{% extends 'index.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+  <section class="header_signin">
+      <div class="container">
+          <div class="row">
+              <div class="col-sm-12">
+                  <h1 style="text-align: center;">FunnySociety</h1>
+              </div>
+          </div>    
+      </div>    
+  </section>
+  <section class="wrapper-login-form">
+      <div class="container">
+          <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h3>Log in</h3>
+                <div class="wrap-login">
+                  <form method="post">
+                      {% csrf_token %}
+                      {{ form.as_p }}
+                      <div class="wraper-button-login">
+                          <button class="btn" type="submit">Sign In</button>
+                        </div>  
+                  </form>
+                  <p style="text-align: center; margin-top:10px;">Don't have an account yet? <a href="{% url 'register' %}">Sign Up </a> now</p>
+                </div>
+            </div>
+          </div>
+      </div>
+  </section>            
+ 
+{% endblock %}

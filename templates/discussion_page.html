@@ -1,0 +1,183 @@
+{% extends 'index.html' %}
+
+{% block title %}Discussion{% endblock %}
+{% block content %}
+    <section class="wrapper-contain-profile">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="bottom-section wrapper-section">
+                        <div class="left-side">
+                            <h1 style="text-align: center; text-transform: capitalize; font-size:25px;">{{discussion.title}}</h1>
+                        </div>
+                        {% if is_admin %}
+                        <div class="right-side">
+                            <button class="btn btn-sm delete-button" id="discussion_dlt_btn" type="submit" data-id="{{discussion.id}}">Delete</button>
+                        </div>
+                           
+           
+                        {% endif %}
+                        <br>
+                        <p>Chat description: {{discussion.content}}</p>
+                        <hr>
+                        <div id = "chat_wrap">
+                        </div>
+                        
+                    </div>
+                    <div id = "chat_bar">
+                        <form action="/post_chat/" method="POST" id="postchat-form">
+                            {% csrf_token %} 
+                            <input class="form-control" id="chat-text" type="text" name="chat">
+                            <div class="wrapper-button-chat">
+                                <button class="btn" id="chat_post_btn" type="submit">Reply</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>    
+            </div>     
+        </div>    
+    </section>    
+   
+<script> 
+
+ $(document).ready(function() {
+    load_chat();
+
+// On discusison delete
+    $('#discussion_dlt_btn').click(function(){   
+        delete_discussion($(this).data("id"));
+    });
+
+    
+// On chat submit
+    $('#postchat-form').on('submit', function(event){
+        event.preventDefault();
+        post_chat();
+    });
+
+// Load chat every 5 seconds
+window.setInterval(function(){
+    load_chat();
+}, 5000);
+
+});
+
+
+// To delete a discussion
+function delete_discussion(discussion_id) {
+    
+$.ajax({
+   url : "delete_discussion/", // end point
+   type : "POST",
+   data : { 
+     id : discussion_id,
+     csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+      },
+   // On success
+   success : function(json) {
+        $(location).attr('href',"/profile/discussion_list");
+   },
+
+   // On error
+   error : function(xhr,errmsg,err) {
+       //console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+   }
+});
+}
+
+
+
+// To add a chat in dicussion
+function post_chat() {
+
+if($('#chat-text').val()=="")
+   return;
+
+$.ajax({
+   url : "post_chat/", // end point
+   type : "POST",
+   data : { 
+     chat_text : $('#chat-text').val(),
+     csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+      },
+   // On success
+   success : function(json) {
+       $('#chat-text').val('');
+       load_chat();
+   },
+
+   // On error
+   error : function(xhr,errmsg,err) {
+       //console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+   }
+});
+}
+
+// Load chats for a discussion
+function  load_chat(){
+    $.ajax({
+        url : "load_chat/", // end point
+        type : "GET",
+        // On success
+        success : function(data) {
+            show_chats(data);
+        },
+
+        // On error
+        error : function(xhr,errmsg,err) {
+            //console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+        }
+    });
+}
+
+
+
+function show_chats(data){ 
+    var chats_str ='';
+    var dlt_btn = '';
+    $.each(data, function(i, chat) {
+
+        if(chat.is_owner){
+            dlt_btn = "<div class='wrapper-remove-button'><button class='btn btn-sm delete-button load_chat_cls' type='submit' data-id='"+chat.chat_id+"'>Remove</button></div>"
+            
+        }
+        chats_str = chats_str + "<div class='chat-content' id='chat"+i+"'><div><p style='font-weight:bold;text-transform:capitalize;'>"+chat.first_name+" <span style='font-size: 12px; color: #717274; font-weight: normal;'>"+moment(chat.timestamp).format('MMMM Do YYYY, h:mm a')+"</span> </p><p>"+chat.text+"</p></div></div>"+dlt_btn+"</div><hr>" 
+        dlt_btn = '' 
+
+    })
+           
+
+    $("#chat_wrap").html(chats_str);
+    $(".load_chat_cls").click(delete_chat);
+
+}
+
+//Delete a chat
+function delete_chat(){
+     $.ajax({
+     url : "delete_chat/", // end point
+     type : "POST",
+     data : { 
+     id : $(this).data("id"),
+     csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+      },
+   // On success
+     success : function(data) {
+        if(data.status == "chat_deleted")
+        {
+            load_chat();
+        }
+     
+    },
+   // On error
+     error : function(xhr,errmsg,err) {
+      // console.log(xhr.status + ": " + xhr.responseText);  // FOr debug purposes
+     }
+    });    
+}
+</script>
+
+
+
+{% endblock %}

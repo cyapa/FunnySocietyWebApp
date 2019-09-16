@@ -1,0 +1,117 @@
+#activator{
+    display: none;
+}
+#profile #activator{
+    display: block;
+}
+#profile_friend .dropdown-item:first-child{
+    display:none;
+}
+.wrapper-contain-profile{
+    padding-top: 20px;
+}
+.divider p:last-child{
+    display: none;
+}
+#friendName{
+    font-size: 20px;
+    margin-bottom: 0px;
+}
+#status_time{
+    font-size:12px;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover{
+    border: 1px solid #2683AE;
+    background: #2683AE;
+}
+.ui-widget.ui-widget-content{
+    border-radius: 5px;
+    -webkit-border-radius: 5px; 
+    -moz-border-radius: 5px; 
+
+}
+.title-right-side-bar{
+    padding-top: 10px;
+}
+#tabs,#friendstab{
+    padding:10px;
+}
+.bottom-section{
+    background-color: #fff;
+    margin-bottom: 10px;
+}
+.wrapper-greeting-profile,.wrapper-status,.wrapper-section{
+    padding: 10px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px; 
+    -moz-border-radius: 5px; 
+    border: 1px solid #c5c5c5;
+}
+.friend-content div:first-child {
+    float: left;
+    width: 49%;
+}
+ .friend-content div:last-child   {
+    float: right;
+}
+.friend-content {
+    min-height: 1px;
+    overflow: hidden;
+    clear: both;
+}
+#req_recvd button,#req_sent button,#cur_friends button {
+    font-size: .875rem !important;
+}
+.delete-button{
+    background-color: #BB3B4C;
+    border-color:#BB3B4C;
+}
+.delete-button:hover{
+    background-color: #da1932;
+    border-color:#da1932;
+}
+.wrapper-inside-status{
+    background-color: #fff;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border: 1px solid #c5c5c5;
+}
+.wraper-button-comment{
+    display: inline-block;
+}
+.old_comment {
+    padding-left: 15px;
+}
+.post_com{
+    display:inline-block;
+    width:85%;
+    margin-bottom:10px;
+}
+#profile_friend .post_com{
+    width:88%;
+}
+.post_comment_cls{
+    padding: 7px;
+    margin-top: -4px;
+    margin-right: 3px;
+    font-size: 12PX;
+    margin-left: 4px;
+}
+@media screen  and (max-width: 1200px) {
+    #profile_friend .post_com,.post_com{
+        width: 100%;
+    }
+    .wraper-button-comment{
+        display: block;
+    }
+    .wraper-button-comment .post_comment_cls{
+        width:100%;
+        font-size:14px;
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+}

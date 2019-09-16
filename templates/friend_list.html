@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+
+{% block title %}Friend List{% endblock %}
+ 
+{% block content %}
+<section class="wrapper-contain-profile">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <section class="bottom-section wrapper-greeting-profile">
+                    <h3 style="text-align: center;">My Friend List: </h3><br>
+                    {% for p in data %}
+                        {% for i in p.friend %}
+                        <p><a href="{% url 'profile_friend' username=i.username  %}">{{i.username}}</a></p> 
+                        <div id="cur_action"><button class='btn delete-button delete_friend_cls' id='frnd_delete' data-id={{i.id}}>Unfriend</button></div>
+                        {% endfor %}
+                    {% endfor %}
+            </div>
+            
+        </div>       
+    </div>
+</section>
+
+<script> 
+
+     $(document).ready(function() 
+     {
+        $(".delete_friend_cls").click(delete_friend);
+
+        function delete_friend(){
+            var action_div_id = $(this).parent().attr('id');
+            $.ajax({
+                url : "delete_friend/", // end point
+                type : "POST",
+                data : { 
+                friend_id : $('#frnd_delete').data("id"),
+                csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+                    },
+                // On success
+                success : function(data) {
+                    if(data.status == "friend_deleted"){
+                        $("#"+action_div_id).remove();
+                    }
+                    //Reload friends 
+                    get_friends();
+                    
+                
+                },
+                // On error
+                error : function(xhr,errmsg,err) {
+                   // console.log(xhr.status + ": " + xhr.responseText);  // FOr debug purposes
+                }
+            });       
+        }    
+    });
+</script>
+{% endblock %}

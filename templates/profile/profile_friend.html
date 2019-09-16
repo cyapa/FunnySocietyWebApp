@@ -1,0 +1,126 @@
+{% extends 'index.html' %}
+
+{% block title %}Profile{% endblock %}
+{% block content %}
+<section class="wrapper-contain-profile">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <section class="bottom-section wrapper-greeting-profile">
+                        <h2 style="font-size: 22px;"><span style="text-transform:capitalize;">{{ user.first_name }}</span>'s basic info:</h2>
+                        <p>UserName: {{ user.username }}</p>
+                        <p>Birthday: {{ user.siteuser.birthdate }}</p>
+                        <p>Gender: {{ user.siteuser.gender }}</p>
+                        <p>Telephone Number: {{ user.siteuser.telephone }}</p>
+                    </section>   
+                </div>
+                <div class="col-lg-8">
+                        <section class="bottom-section wrapper-greeting-profile">
+                            <h2 style="font-size: 22px;">Status of <span style="text-transform:capitalize;">{{ user.first_name }}</span></h2>    
+                        </section>   
+                        <section>
+                            {% for status in status_list %}
+                   
+                            <section>
+                                    <div id="status-wrap"></div>
+                            </section>
+                      
+                            {% endfor %}
+                        </section>    
+                </div>
+            </div>       
+        </div>
+</section>
+    
+
+
+<script> 
+
+// When the document is ready
+    $(document).ready(function() {
+        load_status();
+   });
+   
+//Load profile status posts
+function load_status() {
+    $.ajax({
+        url : "get_status/", // end point
+        type : "GET",
+        // On success
+        success : function(status_data) {
+            load_comments(status_data);
+        },
+        // On error
+        error : function(xhr,errmsg,err) {
+            //console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+        }
+    });
+}
+
+//Load commments for status
+function load_comments(status_data){
+    $.ajax({
+        url : "get_comments/", // end point
+        type : "GET",
+        // On success
+        success : function(comment_data) {
+            show_status(status_data,comment_data);
+        },
+
+        // On error
+        error : function(xhr,errmsg,err) {
+           //console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+        }
+    });
+}
+
+// Display user status
+function show_status(status_data,comment_data){
+    var status_str ='';
+    $.each(status_data, function(i, status) {
+
+        var comments = $(comment_data).filter(function (i,n){
+        return n.status_id=== status.id;
+        });
+
+    var old_comments = "";
+    $.each(comments, function(i, comment) {
+        old_comments = old_comments+ "<div class='old_comment' id='old_comment"+i+"'>"+comment.user__first_name+":"+comment.text+"</div>";
+    });
+        var comment_box = "<div id='comment"+i+"'><input class='form-control post_com' id='com_txt"+status.id+"' type='text' name='' value=''><div class='wraper-button-comment' style='margin-top: 10px;'><button class='btn btn-sm post_comment_cls' id='post_cmnt' data-id="+status.id+">Comment</button></div></div>";
+        status_str = status_str + "<div class='bottom-section  wrapper-status'><div id='status"+i+"'><div id='status_txt' style='font-weight:bold;'>"+status.text+"</div><div id='status_time'>"+moment(status.timestamp).format('YYYY-MM-DD HH:mm')+"</div></div>" +old_comments + comment_box+'</div>';
+    });
+
+    $("#status-wrap").html(status_str);
+    $(".post_comment_cls").click(post_comment);
+}
+
+// Post a comment to a status
+function post_comment(){
+       var stat_id = $(this).data("id");
+       var comment = $("#com_txt"+stat_id).val();
+
+        $.ajax({
+            url : "post_comment/", // end point
+            type : "POST",
+            data : { 
+               status_id : stat_id,
+               comment_txt: comment,
+               csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+               },
+            //On success
+            success : function(data) {
+                if(data.status == "comment_added"){
+                   load_status();
+                }
+            },
+          // On error
+            error : function(xhr,errmsg,err) {
+                //console.log(xhr.status + ": " + xhr.responseText); // For debug purposes
+            }
+        });  
+    }
+   </script>
+
+{% endblock %}
+

@@ -1,0 +1,19 @@
+{% extends 'index.html' %}
+{% block title %}Discussion List:{% endblock %}
+{% block content %}
+    <section class="wrapper-contain-profile">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="bottom-section wrapper-section">
+                        <h1 style="text-align: center; font-size: 27px;">Discussion List:</h1>
+                        {% for discussion in discussions %}
+                            <p><a href="{% url 'discussion_page' pk=discussion.id  %}">{{discussion.title}}</a></p>
+                            <hr>
+                        {% endfor %}
+                    </div>
+                </div>    
+            </div>     
+        </div>    
+    </section>    
+{% endblock %}

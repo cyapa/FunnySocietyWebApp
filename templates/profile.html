@@ -1,0 +1,579 @@
+{% extends 'index.html' %}
+
+{% block title %}Profile{% endblock %}
+ 
+{% block content %}
+ 
+        {% if not user.is_authenticated %}
+            <section class="header_signin">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h1 style="text-align: center;">FunnySociety</h1>
+                        </div>
+                    </div>    
+                </div>    
+            </section>
+            <section class="wrapper-login-form">
+                <h2>Hi ! Welcome to FunnySociety!</h2>
+                <a href="{% url 'login' %}">Sign In</a>
+                <a href="{% url 'register' %}">Sign Up</a>
+            </section>
+        {% else %}
+            
+            <section class="wrapper-contain-profile">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-3">
+                                <section class="bottom-section wrapper-add-friend">
+                                        <div id="friendstab">
+                                            <h5 class="title-right-side-bar"> Friends: </h5>
+                                            <ul>
+                                                <li><a href="#friendstab-1">Friends List</a></li>
+                                                <li><a href="#friendstab-2">Add Friends</a></li>
+        
+                                            </ul>
+                                            <div id="friendstab-1">
+                                                    <div id="cur_friends"></div>
+                                            </div>
+                                            <div id="friendstab-2">
+                                                <form action="/add_friend/" method="POST" id="addfriend-form">
+                                                    {% csrf_token %} 
+                                                    <input class="form-control" id="friend_name" type="text" name="friendname">
+                                                    <div class="wraper-button-login" style="margin-top: 10px;">
+                                                        <button class="btn btn-sm" id="friend_add_btn" type="submit">Add </button>
+                                                    </div>
+                                                </form>
+                                                <div id="add_friend_status"></div>
+                                            </div>
+                                           
+                                            
+                                        </div>
+                                       
+                                       
+                                    </section>
+                                    
+                                    <section class="bottom-section wrapper-friend-request">
+                                            <div id="tabs">
+                                                    <h5 class="title-right-side-bar"> Friend requests </h5>
+                                                    <ul>
+                                                      <li><a href="#tabs-1">Received Request</a></li>
+                                                      <li><a href="#tabs-2">Sent Request</a></li>
+                                                    </ul>
+                                                    <div id="tabs-1">
+                                                        <div id="req_recvd"></div>
+                                                        <div id="req_recvd_status"></div>
+                                                    </div>
+                                                    <div id="tabs-2">
+                                                        <div id="req_sent"></div>
+                                                        <div id="req_sent_status"></div>
+                                                    </div>
+                                                    
+                                                  </div>
+                                        
+                                       
+                                    </section>
+                                    <hr>
+                        </div>
+                        <div class="col-lg-6">
+                            <section class="bottom-section wrapper-greeting-profile">
+                                <h4>Hi {{ user.first_name }}! Welcome to your profile!</h4>
+                                <h5>What's on your mind,{{ user.first_name }} ?</h5>
+                                <br>
+                                <form action="/create_post/" method="POST" id="post-form">
+                                    {% csrf_token %} 
+                                    <input class="form-control" id="post-text" type="text" name="status">
+                                    <div class="wraper-button-login" style="margin-top: 10px;">
+                                        <button class="btn" id="status_post_btn" type="submit"> Share! </button>
+                                    </div>
+                                </form>
+                            </section>
+                            <section>
+                                <div id="status-wrap"></div>
+                            </section>
+                            
+                        </div>
+                        <div class="col-lg-3">
+                           
+                           
+                            <section class="bottom-section wrapper-section">
+                                   
+                                <h5>Discussion List:</h5>
+                                <ul id="discussion-wrap">
+                                    
+                                </ul>  
+                               
+                            </section>
+
+                           
+                           
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="overlay" id="overlay" style="display:none;"></div>
+            <div class="box" id="box">
+                    <a class="boxclose" id="boxclose">
+                        <i class="material-icons">close</i>
+                    </a>
+                    
+                    <h3>Discussion</h3>
+                    <form action="/create_discussion/" method="POST" id="discussion-form">
+                         {% csrf_token %} 
+                         <p>Title</p>
+                         <input class="form-control" id="post-title" type="text" name="discussion">
+                         <p>Content</p>
+                         <input class="form-control" id="post-content" type="text" name="discussion">
+
+                         <div class="wraper-button-login" style="margin-top: 10px;">
+                             <button class="btn" id="discussion_created_btn" type="submit"> Create Discussion </button>
+                         </div>
+                     </form>
+            </div>           
+            
+            <!--Add user container-->
+           
+
+            <!--User status container-->
+          
+
+            
+            <!--User friend list container-->
+            
+            
+
+          
+                
+        {% endif %}
+   
+
+<script> 
+
+//When the document is ready
+ $(document).ready(function() {
+
+// Creating tabs
+    $( "#tabs" ).tabs();
+    $( "#friendstab" ).tabs();
+
+// Creating popup
+    $('#activator').click(function(){
+        $('#overlay').fadeIn('fast',function(){
+            $('#box').animate({'top':'50%'},500);
+        });
+    });
+
+// Limited the list of discussion
+    $('#boxclose').click(function(){
+        $('#box').animate({'top':'-200px'},500,function(){
+            $('#overlay').fadeOut('fast');
+        });
+    });
+
+// On discussion submit
+$('#discussion-form').on('submit', function(event){
+    event.preventDefault();
+    create_discussion();
+    $('#box').animate({'top':'-200px'},500,function(){
+            $('#overlay').fadeOut('fast');
+    });
+});
+
+
+// On status submit
+$('#post-form').on('submit', function(event){
+    event.preventDefault();
+    create_post();
+});
+
+
+// On add friend
+$('#addfriend-form').on('submit', function(event){
+    event.preventDefault();
+    add_friend();
+    get_friends();
+});
+
+// Load user discussion
+load_discussion();
+
+// Load user status
+load_status();
+
+//Load current friends
+get_friends();
+
+});
+
+
+// Add friend
+function add_friend() {
+    $.ajax({
+        url : "add_friend/", // end point
+        type : "POST",
+        data : { 
+          username : $('#friend_name').val(),
+          csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+           },
+        // On success
+        success : function(data) {
+            $('#friend_name').val('');
+
+            var friend_request_sts="Request not sent!";
+            
+            if(data.status == "same_user")
+                friend_request_sts="You cannot send a request to yourself!";
+            if(data.status == "request_sent"){
+                friend_request_sts="Friend request sent!";
+                get_friends();
+            }
+
+            if(data.status == "user_not_found")
+                friend_request_sts="User not found! Please check the user name";
+            
+            if(data.status == "already_sent")
+                friend_request_sts="Already a friend or request sent/received! Try a different user";
+            
+            $("#add_friend_status").html("<div id=add_friend_sts_txt>"+friend_request_sts+"</div>");            
+        },
+
+        // On error
+        error : function(xhr,errmsg,err) {
+           // console.log(xhr.status + ": " + xhr.responseText);  // FOr debug purposes
+        }
+    });
+}
+
+//Create discussion
+function create_discussion() {
+
+     if($('#post-title').val()=="" && $('#post-content').val() =="" )
+        return;
+
+    $.ajax({
+        url : "create_discussion/", // end point
+        type : "POST",
+        data : { 
+          title : $('#post-title').val(),
+          content: $('#post-content').val(),
+          csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+        },
+        // On success
+        success : function(json) {
+            $('#post-title').val('');
+            $('#post-content').val('');
+            
+            //Reload discussion
+            load_discussion();
+        },
+
+        // On error
+        error : function(xhr,errmsg,err) {
+            //console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+        }
+    });
+}
+
+//Load discussion
+function load_discussion() {
+    $.ajax({
+        url : "get_discussion/", // end point
+        type : "GET",
+        // On success
+        success : function(data) {
+            show_discussion(data);
+        },
+
+        // On error
+        error : function(xhr,errmsg,err) {
+            //console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+        }
+    });
+   
+}
+
+// Show discussion
+function show_discussion(data){
+    var discussion_str ='';
+    $.each(data, function(i, discussion) {
+        discussion_str = discussion_str + "<li class='discussion_txt'><a href='discussion/"+discussion.id+"'>"+discussion.title+"</li></div>" ;        
+    });  
+    $("#discussion-wrap").html(discussion_str);
+}
+
+//Ceate a post
+function create_post() {
+    if($('#post-text').val()=="")
+        return;
+    $.ajax({
+        url : "create_post/", // end point
+        type : "POST",
+        data : { 
+          the_post : $('#post-text').val(),
+          csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+           },
+        // On success
+        success : function(json) {
+            $('#post-text').val('');
+            //reload status
+            load_status(); 
+        },
+
+        // On error
+        error : function(xhr,errmsg,err) {
+           // console.log(xhr.status + ": " + xhr.responseText); // For debug purposes
+        }
+    });
+}
+
+
+//Load status
+function load_status() {
+    $.ajax({
+        url : "get_status/", // end point
+        type : "GET",
+        // On success
+        success : function(status_data) {          
+            load_comments(status_data);
+        },
+
+        // On error
+        error : function(xhr,errmsg,err) {
+         //   console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+        }
+    });
+}
+
+// Load comments
+function load_comments(status_data){
+    $.ajax({
+        url : "get_comments/", // end point
+        type : "GET",
+        // On success
+        success : function(comment_data) {
+            show_status(status_data,comment_data);
+        },
+
+        // On error
+        error : function(xhr,errmsg,err) {
+           // console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+        }
+    });
+}
+
+// Django endpoint to show user posts
+function show_status(status_data,comment_data){
+    var status_str ='';
+
+    $.each(status_data, function(i, status) {      
+        var comments = $(comment_data).filter(function (i,n){
+        return n.status_id === status.id;
+        });
+
+    var old_comments = "";
+    $.each(comments, function(i, comment) {
+
+        old_comments = old_comments+ "<div class='old_comment' id='old_comment"+i+"'>"+comment.user__first_name+":"+comment.text+"</div>";
+    });
+        var comment_box = "<div id='comment"+i+"'><input class='form-control post_com' id='com_txt"+status.id+"' type='text' name='' value=''><div class='wraper-button-comment' style='margin-top: 10px;'><button class='btn btn-sm post_comment_cls' id='post_cmnt' data-id="+status.id+">Comment</button></div></div>";
+        status_str = status_str + "<div class='bottom-section  wrapper-status'><div id='status"+i+"'><div id='status_txt' style='font-weight:bold;'>"+status.text+"</div><div id='status_time'>"+moment(status.timestamp).format('YYYY-MM-DD HH:mm')+"</div></div>" +old_comments + comment_box+'</div>';
+    });
+
+    $("#status-wrap").html(status_str);
+    $(".post_comment_cls").click(post_comment);
+}
+
+
+// Post comments
+function post_comment(){
+    var stat_id = $(this).data("id");
+    var comment = $("#com_txt"+stat_id).val();
+
+     $.ajax({
+         url : "post_comment/", // end point
+         type : "POST",
+         data : { 
+            status_id : stat_id,
+            comment_txt: comment,
+            csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+            },
+         // On success
+         success : function(data) {
+             if(data.status == "comment_added"){
+                load_status();
+             } 
+         },
+        // On error
+         error : function(xhr,errmsg,err) {
+             //console.log(xhr.status + ": " + xhr.responseText);  // OFr debug puposes
+         }
+     });
+ }
+
+//Get friends
+function get_friends() {
+    $.ajax({
+        url : "get_friends/", // end point
+        type : "GET",
+        // On success
+        success : function(data) {
+            show_friends(data);
+        },
+        // On error
+        error : function(xhr,errmsg,err) {
+           // console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+        }
+    });
+}
+
+
+// Show friends
+function show_friends(data){
+    var received_str ="";
+    var current_friend_str ="";
+    var sent_str ="";
+
+    $.each(data, function(i, data) {
+        //User has received the request
+        if(data.isPendingRequest && data.isReceivedRequest == true ){
+           
+            var received_action = "<div id=recvd_action"+i+"><button class='btn btn-sm accept_friend_cls' id='frnd_accept' data-id="+data.friend[0].id+"> Accept</button> <button class='btn btn-sm delete-button decline_friend_cls' id='frnd_decline' data-id="+data.friend[0].id+">Decline</button></div>";
+            received_str = received_str + "<div class='friend-content'><div id='friend"+i+"'><p id='friendName'><a href='"+ data.friend[0].username+"'>"+data.friend[0].first_name+"</a></p><span id='status_time'><em>"+moment(data.timestamp).format('YYYY-MM-DD HH:mm')+"</em></span></div>" +received_action+"</div>";
+        }
+
+          //User has sent the request
+          if(data.isPendingRequest && data.isReceivedRequest == false ){
+            var sent_action = "<div id=sent_action"+i+"><button class='btn btn-sm delete-button delete_friend_request_cls' id='frnd_rqst_delete' data-id="+data.friend[0].id+">Delete</button></div>";
+            sent_str = sent_str + "<div class='friend-content'><div id='friend"+i+"'><p id='friendName'><a href='"+ data.friend[0].username+"'>"+data.friend[0].first_name+"</a></p><span id='status_time'><em>"+moment(data.timestamp).format('YYYY-MM-DD HH:mm')+"</em></span></div>" +sent_action+"</div>";
+        }
+
+        // Both user and receiver are friends
+         if(data.isPendingRequest==false){
+            var cur_action = "<div id=cur_action"+i+"><button class='btn btn-sm delete-button delete_friend_cls' id='frnd_delete' data-id="+data.friend[0].id+">Unfriend</button></div>";
+            current_friend_str = current_friend_str + "<div class='friend-content'> <div id='friend"+i+"'><p id='friendName'><a href='"+ data.friend[0].username+"'>"+data.friend[0].first_name+"</a></p><span id='status_time'><em>"+moment(data.timestamp).format('YYYY-MM-DD HH:mm')+"</em></span></div>" +cur_action+"</div>";
+        } 
+    });
+
+    $("#req_recvd").html(received_str);
+    $("#req_sent").html(sent_str);
+    $("#cur_friends").html(current_friend_str);
+
+    $(".accept_friend_cls").click(accept_friend);
+    $(".decline_friend_cls").click(decline_friend);
+    $(".delete_friend_request_cls").click(delete_friend_request);
+    $(".delete_friend_cls").click(delete_friend);
+ }
+
+
+// Friend accept button functionality
+function accept_friend(){
+    var action_div_id = $(this).parent().attr('id');
+     $.ajax({
+         url : "accept_friend/", // end point
+         type : "POST",
+         data : { 
+           friend_id : $(this).data("id"),
+           csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+            },
+         // On success
+         success : function(data) {
+             if(data.status == "friend_accepted"){
+                $("#"+action_div_id).remove();
+                //Reload  friends
+                get_friends();
+             }
+         },
+        // On error
+         error : function(xhr,errmsg,err) {
+            // console.log(xhr.status + ": " + xhr.responseText);  // OFr debug purposes
+         }
+     });
+ }
+
+
+ // Friend decline button functionality
+ function decline_friend(){
+    var action_div_id = $(this).parent().attr('id');
+     $.ajax({
+         url : "decline_friend/", // end point
+         type : "POST",
+         data : { 
+           friend_id : $(this).data("id"),
+           csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+            },
+         // On success
+         success : function(data) {
+             if(data.status == "friend_declined"){
+                $("#"+action_div_id).remove();
+             }
+                //Reload friends 
+             get_friends();
+              
+         },
+        // On error
+         error : function(xhr,errmsg,err) {
+            // console.log(xhr.status + ": " + xhr.responseText);  // For debug purposes
+         }
+     });
+
+ }
+
+// Friend delete button functionality
+ function delete_friend_request(){
+    var action_div_id = $(this).parent().attr('id');
+     $.ajax({
+         url : "delete_friend_request/", // end point
+         type : "POST",
+         data : { 
+           friend_id : $(this).data("id"),
+           csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+            },
+         // On success
+         success : function(data) {
+             if(data.status == "friend_declined"){
+                $("#"+action_div_id).remove();
+             }
+            //Reload friends 
+             get_friends();
+        
+         },
+        // On error
+         error : function(xhr,errmsg,err) {
+            // console.log(xhr.status + ": " + xhr.responseText);  //  For debug purposes
+         }
+     });
+
+ }
+
+// Delete a friend
+  function delete_friend(){
+    var action_div_id = $(this).parent().attr('id');  
+     $.ajax({
+         url : "delete_friend/", // end point
+         type : "POST",
+         data : { 
+           friend_id : $(this).data("id"),
+           csrfmiddlewaretoken: '{{ csrf_token }}', // for Django, add csrf_token with data
+            },
+         // On success
+         success : function(data) {
+             if(data.status == "friend_deleted"){
+                $("#"+action_div_id).remove();
+             }
+            //Reload friends 
+             get_friends();                  
+         },
+        // On error
+         error : function(xhr,errmsg,err) {
+            // console.log(xhr.status + ": " + xhr.responseText);  // FOr debug purposes
+         }
+     });
+ }
+
+</script>
+    
+{% endblock %}
+
+
+
+

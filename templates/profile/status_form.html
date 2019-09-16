@@ -1,0 +1,12 @@
+{% extends 'index.html' %}
+
+{% block title %}Status{% endblock %}
+
+{% block content %}
+  <h2>What's on your mind,</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post</button>
+  </form>
+{% endblock %}
